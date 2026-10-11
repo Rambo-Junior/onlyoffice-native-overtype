@@ -1,0 +1,21 @@
+name: Source checks
+on:
+  push:
+  pull_request:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: NodeJS JS checks
+        run: |
+          node --check plugin/quick_action.js
+          node --check src/rc5_runtime.js
+          node tests/test_runtime_10s.cjs
+          node tests/test_plugin_about.cjs
+      - name: Complete upstream licensing gate
+        run: |
+          test -f LICENSE
+          test "$(git hash-object LICENSE)" = '53bc62cde3c705aa2d03b895b966bd6250f389ae'
