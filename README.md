@@ -1,6 +1,6 @@
 # ONLYOFFICE Native Overtype
 
-**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v0.9.0-beta.1`.**
+**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v0.9.0-beta.2`.**
 
 **English:** this README · [Technical documentation](DOKUMENTACIO_EN.md) · [Release notes](GITHUB_RELEASE_NOTES_EN.md) · [Release checklist](RELEASE_GATE_EN.md)\
 **Magyar:** [README magyarul](README_HU.md) · [Részletes műszaki dokumentáció](DOKUMENTACIO_HU.md) · [Kiadási megjegyzések](GITHUB_RELEASE_NOTES_HU.md)
@@ -32,7 +32,7 @@
 
 The source-only ZIP includes SDKJS patch scripts, a standalone toolbar plugin, tests, a portable installer, original-license notices, and rollback support. It **does not ship a compiled ONLYOFFICE application or patched Word bundles**. `--build` fetches the exact pinned upstream SDKJS source and creates the patched bundles locally.
 
-The beta.1 GitHub Release contains the first published source snapshot. English documentation and bilingual UI updates on `main` may be newer than that tag; a subsequent beta tag should be used for a reproducible release of those changes. Do not assume that the beta.1 asset contains later `main` changes.
+**Beta.2 includes the English technical documentation and bilingual About & Licenses UI.** The original beta.1 release remains available as a historical snapshot; do not assume that beta.1 contains these later improvements.
 
 ## Installation on a clean, supported machine
 

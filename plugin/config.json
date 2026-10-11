@@ -1,7 +1,7 @@
 {
   "name": "Overtype",
   "guid": "asc.{A360C0D9-711B-4C90-BFB4-58AC023074E6}",
-  "version": "0.9.0-beta.1",
+  "version": "0.9.0-beta.2",
   "description": "Native Insert/Overtype mode for ONLYOFFICE Desktop Editors 9.4.0-129 (Linux/X11). Experimental.",
   "variations": [{
     "description": "Native Overtype toolbar action, no X11 Delete hook",

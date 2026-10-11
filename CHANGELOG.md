@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0-beta.2 — 2026-10-11
+
+- English README, full technical documentation and GitHub Release notes; Hungarian originals retained.
+- Bilingual About & Licenses toolbar and legal information panel.
+- Same native RC5/10-second overtype and Undo engine; no engine changes from beta.1.
+- Source archive and plugin metadata version now match beta.2.
+- Original 29/29 automated GUI pass was for RC5 at 1.8 seconds; manual 10-second and updated bilingual UI checks reported on ThinkPad T470s.
+
 ## 0.9.0-beta.1 — 2026-10-11
 
 - Source-only portable installer for Linux Mint 22.3/X11 and ONLYOFFICE Desktop Editors 9.4.0-129.

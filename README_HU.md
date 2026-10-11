@@ -1,4 +1,4 @@
-# ONLYOFFICE Native Overtype – portable beta 0.9.0-beta.1
+# ONLYOFFICE Native Overtype – portable beta 0.9.0-beta.2
 
 **Kísérleti, nem hivatalos módosítás** az ONLYOFFICE Desktop Editors alkalmazáshoz. Nem ONLYOFFICE által támogatott funkció.
 
@@ -75,3 +75,5 @@ A program a helyi, rögzített SDKJS Git-commit **változatlan teljes licencfáj
 **Kiadási korlát:** az About ablak és az alapból letiltott diagnosztika új kódmódosítás, így a korábbi 4/4 kézi és 29/29 automatikus siker **nem igazolja automatikusan ezt az új csomagot**. A kiadási jelölt Névjegy/licencpanelje és natív felülírás/Undo/Redo funkciója a ThinkPad T470s-en 2026-10-11-én kézi GUI-tesztben PASS. A DOCX mentés/újranyitás a pluginfrissítés előtti RC5/10s változaton PASS. A teljes rollback éles próbája és a 10 s-os build 29-es automata regressziója még hiányzik. A 29/29 QA a régebbi 1,8 másodperces RC5 build eredménye.
 
 A részletes dokumentáció: [`DOKUMENTACIO_HU.md`](DOKUMENTACIO_HU.md), a kiadás korlátai: [`RELEASE_GATE.md`](RELEASE_GATE.md).
+
+**0.9.0-beta.2 frissítés:** angol dokumentáció és kétnyelvű Névjegy/licencfelület; a natív Overtype-motor változatlan.

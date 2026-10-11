@@ -213,3 +213,7 @@ The legal notice/toolbar and generated icons were tested on the ThinkPad before 
 ---
 
 **Summary:** The structural risks of the old X11 Delete technique were addressed by moving the replacement into the Word engine. The initial RC5 fixed the observed test-suite failures in the **29/29 pass** isolated run. The subsequent **10-second** Undo improvement was deployed and manually verified on a second machine with DOCX save/reopen. The public source beta is useful for controlled experimentation on the specified platform, but should not be presented as a universally safe, officially supported or stable ONLYOFFICE feature.
+
+## v0.9.0-beta.2 — English documentation and bilingual interface
+
+The `beta.2` release adds an English-first README and technical documentation, preserves the original Hungarian documents, and introduces English/Hungarian About & Licenses text. The core RC5/10-second editor patch is unchanged. The previously reported 29-case automated GUI regression refers to the original 1.8-second RC5 build, not beta.2. The 10-second portable build and bilingual About panel were independently checked manually on ThinkPad T470s. The full automated suite and complex document-safety cases remain outstanding.

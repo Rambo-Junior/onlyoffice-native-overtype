@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Copy exact upstream LICENSE from verified SDKJS git checkout; zip source release."""
-import hashlib,subprocess,sys,zipfile
+import hashlib,subprocess,sys,zipfile,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 SRC=Path.home()/'.cache/onlyoffice-overtype-native-940129/sdkjs'
@@ -17,7 +17,7 @@ if b'Additional Terms' not in raw or b'Ascensio System SIA' not in raw:sys.exit(
 # Hash all inputs after final source prep; omit checksum itself.
 files=sorted(p for p in ROOT.rglob('*') if p.is_file() and p.name!='SHA256SUMS' and '.git' not in p.parts and '__pycache__' not in p.parts and p.suffix!='.pyc')
 (ROOT/'SHA256SUMS').write_text(''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(ROOT).as_posix()}\n' for p in files),encoding='utf8')
-output=ROOT.parent/'onlyoffice-native-overtype-v0.9.0-beta.1-source.zip'
+output=ROOT.parent/f"onlyoffice-native-overtype-v{json.loads((ROOT/'plugin/config.json').read_text(encoding='utf8'))['version']}-source.zip"
 with zipfile.ZipFile(output,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
     for p in sorted([*files,ROOT/'SHA256SUMS']):
         z.write(p,arcname=p.relative_to(ROOT).as_posix())
