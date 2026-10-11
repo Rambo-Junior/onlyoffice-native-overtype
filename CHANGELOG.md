@@ -18,4 +18,4 @@
 - Corrected source SPDX identifiers and obsolete install warning; preserved native OVR behavior.
 - Added pinned upstream-license packaging gate and unit CI checks.
 
-GUI re-verification required for these new changes before first public beta release.
+Release-candidate GUI check PASS on ThinkPad T470s (2026-10-11): About & Licenses and native typing/Undo/Redo. Previous portable RC5/10s save/reopen smoke test PASS.

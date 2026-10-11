@@ -1,6 +1,6 @@
 # Public release gate — 2026-10-11
 
-**Státusz: KIADÁS ELŐTT MÉG CÉLZOTT GUI-PRÓBA SZÜKSÉGES.** Az eredeti hordozható RC5/10s második gépes tesztje 4/4 PASS volt. A kiadásra előkészített csomagban az alábbi, még nem GUI-tesztelt változások történtek:
+**Státusz: CÉLZOTT GUI-PRÓBA PASS (2026-10-11); nyilvános beta csak külön felhasználói jóváhagyás után.** Az eredeti hordozható RC5/10s második gépes tesztje 4/4 PASS volt. A kiadásra előkészített csomagban az alábbi, még nem GUI-tesztelt változások történtek:
 
 - Az ikonokat 2026-10-11-én létrehozott, önálló geometriájú grafikára cseréltük.
 - Külön szalaggomb: `Névjegy és licencek` → About-ablak a jogi értesítéssel és az eredeti ONLYOFFICE licenclinkjével.

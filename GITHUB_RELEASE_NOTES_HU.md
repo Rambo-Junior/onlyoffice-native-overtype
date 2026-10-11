@@ -1,6 +1,6 @@
 # ONLYOFFICE Native Overtype 0.9.0-beta.1 – javasolt GitHub Release-leírás
 
-> **ELŐKÉSZÍTETT SZÖVEG, MÉG NEM PUBLIKÁLHATÓ AUTOMATIKUSAN.** Az upstream teljes licencszöveg, a módosított felület jogi tájékoztatója és az ikonok felhasználási joga még ellenőrzendő. A nyilvános megjelentetéshez külön felhasználói jóváhagyás is szükséges.
+> **Nem hivatalos, kísérleti beta.** A kiadási jelölt Névjegy/licencfelülete és Undo/Redo működése a ThinkPad T470s-en ellenőrzött (2026-10-11). A komplex dokumentumok és a 10 másodperces build teljes automatizált regressziója nem igazolt.
 
 Kísérleti, nem hivatalos natív **Insert/Overtype** mód az ONLYOFFICE Desktop Editors Word-szerkesztőhöz. Nem az ONLYOFFICE gyártója által fejlesztett, jóváhagyott vagy támogatott megoldás.
 

@@ -19,31 +19,31 @@ Zárd be az ONLYOFFICE-ot, ellenőrizd a verziót: `dpkg-query -W -f='${Version}
 Az első **olvasási ellenőrzés**:
 
 ```bash
-bash ONLYOFFICE_Overtype_Portable_Beta_940129/run.sh --check
+bash run.sh --check
 ```
 
 Egyedi, csak felhasználói mappában történő forrásletöltés és build:
 
 ```bash
-bash ONLYOFFICE_Overtype_Portable_Beta_940129/run.sh --build
+bash run.sh --build
 ```
 
 Ezt követően az éles rendszerfájlok telepítése, **csak ha a build PASS**:
 
 ```bash
-bash ONLYOFFICE_Overtype_Portable_Beta_940129/run.sh --install
+bash run.sh --install
 ```
 
 A sikeres telepítés után:
 
 ```bash
-bash ONLYOFFICE_Overtype_Portable_Beta_940129/run.sh --status
+bash run.sh --status
 ```
 
 **Visszaállítás:**
 
 ```bash
-bash ONLYOFFICE_Overtype_Portable_Beta_940129/run.sh --rollback
+bash run.sh --rollback
 ```
 
 A gyári két SDKJS-fájlról a rendszer `/var/lib/onlyoffice-overtype-native-portable-940129` könyvtárban készül root-only mentés. A friss Overtype plugin a felhasználói ONLYOFFICE pluginmappában jön létre; korábbi, azonos GUID-jú plugin esetén a telepítő **nem írja felül**.
@@ -72,6 +72,6 @@ python3 tools/prepare_github_release.py
 
 A program a helyi, rögzített SDKJS Git-commit **változatlan teljes licencfájlját** másolja a `LICENSE` fájlba, ellenőrzi annak Git SHA-ját, újraszámolja a `SHA256SUMS` fájlt és előállítja a publikálható forrás-ZIP-et. Ha nincs meg a teljes licenc, a GitHub Actions licencekapu hibával leáll.
 
-**Kiadási korlát:** az About ablak és az alapból letiltott diagnosztika új kódmódosítás, így a korábbi 4/4 kézi és 29/29 automatikus siker **nem igazolja automatikusan ezt az új csomagot**. A publikus kiadás előtt legalább a Névjegy panel megjelenését, a natív felülírást, az egyszeri Undo/Redo-t, a DOCX mentés/újranyitást és a rollbacket a célplatformon újra ellenőrizni kell. A 29/29 QA a régebbi 1,8 másodperces RC5 build eredménye.
+**Kiadási korlát:** az About ablak és az alapból letiltott diagnosztika új kódmódosítás, így a korábbi 4/4 kézi és 29/29 automatikus siker **nem igazolja automatikusan ezt az új csomagot**. A kiadási jelölt Névjegy/licencpanelje és natív felülírás/Undo/Redo funkciója a ThinkPad T470s-en 2026-10-11-én kézi GUI-tesztben PASS. A DOCX mentés/újranyitás a pluginfrissítés előtti RC5/10s változaton PASS. A teljes rollback éles próbája és a 10 s-os build 29-es automata regressziója még hiányzik. A 29/29 QA a régebbi 1,8 másodperces RC5 build eredménye.
 
 A részletes dokumentáció: [`DOKUMENTACIO_HU.md`](DOKUMENTACIO_HU.md), a kiadás korlátai: [`RELEASE_GATE.md`](RELEASE_GATE.md).
