@@ -13,11 +13,11 @@
       guid: plugin.guid || 'asc.{A360C0D9-711B-4C90-BFB4-58AC023074E6}',
       tabs: [{id: 'plugins', text: 'Plugins', items: [
         {id: TOGGLE, type: 'big-button', text: 'Overtype',
-         hint: 'Nem hivatalos ONLYOFFICE-módosítás (2026). Insert váltja az INS/OVR módot. A jogi tájékoztatót a Névjegy és licencek gombbal nyithatja meg.',
+         hint: 'Unofficial ONLYOFFICE modification (2026). Insert switches INS/OVR. Legal notices: About & Licenses. / Nem hivatalos módosítás; Névjegy és licencek.',
          icons: 'resources/icon.png', lockInViewMode: false, enableToggle: false,
          split: false, items: []},
-        {id: ABOUT, type: 'button', text: 'Névjegy és licencek',
-         hint: 'Eredeti fejlesztő: Ascensio System SIA / ONLYOFFICE. Nem hivatalos módosítás. GNU AGPLv3 és ONLYOFFICE-kiegészítések.',
+        {id: ABOUT, type: 'button', text: 'About & Licenses / Névjegy és licencek',
+         hint: 'Original developer: Ascensio System SIA / ONLYOFFICE. Unofficial modification. GNU AGPLv3 and supplemental terms.',
          icons: 'resources/icon.png', lockInViewMode: false,
          split: false, items: []}
       ]}]
@@ -32,7 +32,7 @@
       const popup = new window.Asc.PluginWindow();
       popup.show({
         url: new URL('about.html', window.location.href).href,
-        description: 'Overtype — Névjegy és licencek',
+        description: 'Overtype — About & Licenses / Névjegy és licencek',
         type: 'window', size: [590, 460], buttons: []
       });
       return;

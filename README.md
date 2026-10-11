@@ -1,77 +1,102 @@
-# ONLYOFFICE Native Overtype – portable beta 0.9.0-beta.1
+# ONLYOFFICE Native Overtype
 
-**Kísérleti, nem hivatalos módosítás** az ONLYOFFICE Desktop Editors alkalmazáshoz. Nem ONLYOFFICE által támogatott funkció.
+**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v0.9.0-beta.1`.**
 
-**Egyetlen támogatott célplatform:** Linux Mint 22.3, X11 (Cinnamon), ONLYOFFICE Desktop Editors **9.4.0-129**, hagyományos DEB telepítés. Más verzióval, Flatpak/Snap alatt, Waylanden vagy Windows/macOS rendszeren **nem telepíthető**.
+**English:** this README · [Technical documentation](DOKUMENTACIO_EN.md) · [Release notes](GITHUB_RELEASE_NOTES_EN.md) · [Release checklist](RELEASE_GATE_EN.md)\
+**Magyar:** [README magyarul](README_HU.md) · [Részletes műszaki dokumentáció](DOKUMENTACIO_HU.md) · [Kiadási megjegyzések](GITHUB_RELEASE_NOTES_HU.md)
 
-Az `Insert` kapcsolja az INS/OVR módot. Felülíráskor az aktuális bekezdés következő egyszerű karakterét helyettesíti, a dokumentum szerkezeti határait védve. A folyamatos gépelést legfeljebb **10 másodperces** betűközökig egy Ctrl+Z-egységbe csoportosítja; a navigáció, mentés és kijelölés külön művelet. A szalag **Overtype** gombja is kapcsol.
+> **Unofficial modification:** This project is not developed, endorsed or supported by ONLYOFFICE or Ascensio System SIA. It replaces two installed Word-editor JavaScript bundles. This is a **beta**, not a universally safe replacement for the stock editor. Back up important documents and avoid using the patched editor for irreplaceable or complex DOCX files.
 
-## Mi van a csomagban?
+## Supported environment
 
-A forrásalapú patchszkriptek, natív Overtype plugin, telepítő, ellenőrzések és visszaállító. **NINCS benne előre módosított ONLYOFFICE-motor vagy teljes alkalmazás.** A builder a hivatalos SDKJS rögzített `v9.4.0.129` Git-tagből (`75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`) épít. Az eredeti, módosítás nélküli forrást a GitHubról tölti le; szükséges az internet, `git`, `node`, `python3`, `sudo`, és legalább 4 GiB szabad hely.
+| Component | Required version / configuration |
+| --- | --- |
+| Operating system | **Linux Mint 22.3**, Cinnamon, **X11** |
+| Office suite | **ONLYOFFICE Desktop Editors 9.4.0-129**, system-installed DEB |
+| Installation location | `/opt/onlyoffice/desktopeditors` |
+| SDKJS upstream | Tag `v9.4.0.129`, commit `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` |
+| Build dependencies | Python 3, Git, Node.js, internet access, `sudo`, at least 4 GiB free disk space |
 
-A builder nem módosítja a `/opt/onlyoffice` telepítést. Az élesítés csak külön parancsra, interaktív `TELEPITES` jóváhagyással történik. Ezt a csomagot **ne telepítsd a már natív RC5-tel módosított első gépre**; ott a korábbi, működő verzió maradjon.
+**Not supported/tested:** other ONLYOFFICE builds, Flatpak/Snap/AppImage, Wayland, Windows, macOS, or other Linux distributions. The installer must reject unsupported installations; do not bypass its version or hash checks.
 
-## Második, gyári ONLYOFFICE-os gép: telepítési lépések
+## Features
 
-Zárd be az ONLYOFFICE-ot, ellenőrizd a verziót: `dpkg-query -W -f='${Version}\n' onlyoffice-desktopeditors`.
+- Toggle **Insert (INS)** versus **Overtype (OVR)** using the `Insert` key or the **Overtype** button on the Plugins ribbon.
+- In OVR mode, replace the next ordinary character instead of inserting before it, with conservative paragraph-boundary and selection handling. Unsupported document structures may fall back to ordinary insertion.
+- Group consecutive overwrites into one Undo unit when each typing gap is **at most 10 seconds**, subject to additional editing/history boundary checks. `Ctrl+Z` restores the prior text; `Ctrl+Y` reapplies it.
+- Preserve the conventional `Ctrl+Insert` (Copy) and `Shift+Insert` (Paste) shortcuts.
+- Replace the old X11 `Delete`-event trick with changes inside the Word editing engine. **Do not run the legacy `onlyoffice-overtype-x11` helper at the same time.**
+- Provide separate **About & Licenses / Névjegy és licencek** information and a reversible installation.
 
-Az első **olvasási ellenőrzés**:
+## What the download contains
+
+The source-only ZIP includes SDKJS patch scripts, a standalone toolbar plugin, tests, a portable installer, original-license notices, and rollback support. It **does not ship a compiled ONLYOFFICE application or patched Word bundles**. `--build` fetches the exact pinned upstream SDKJS source and creates the patched bundles locally.
+
+The beta.1 GitHub Release contains the first published source snapshot. English documentation and bilingual UI updates on `main` may be newer than that tag; a subsequent beta tag should be used for a reproducible release of those changes. Do not assume that the beta.1 asset contains later `main` changes.
+
+## Installation on a clean, supported machine
+
+Download the source ZIP from [GitHub Releases](https://github.com/Rambo-Junior/onlyoffice-native-overtype/releases) and extract it. Run the following **from the extracted project root** as your normal user (not via `sudo`):
 
 ```bash
 bash run.sh --check
-```
-
-Egyedi, csak felhasználói mappában történő forrásletöltés és build:
-
-```bash
 bash run.sh --build
-```
-
-Ezt követően az éles rendszerfájlok telepítése, **csak ha a build PASS**:
-
-```bash
 bash run.sh --install
-```
-
-A sikeres telepítés után:
-
-```bash
 bash run.sh --status
 ```
 
-**Visszaállítás:**
+`--check` validates the installed version, X11 session, closed editor, absence of conflicting legacy helpers/plugins, and clean vendor files. `--build` downloads and builds under `~/.cache/onlyoffice-overtype-native-940129/` **without modifying `/opt`**. Only run `--install` after `BUILD PASS`; it requires the explicit confirmation word `TELEPITES` (the current CLI confirmation has not yet been localized). The installer then requests the necessary root permissions, makes verified factory backups, replaces the two Word JS bundles, and installs the standalone plugin into your user account.
+
+**Never install over an already-patched editor, or alongside the legacy X11 Overtype helper.** Remove/disable the legacy package or service first, and confirm that the editor is closed. Keep the extracted installer, its build cache/manifests, and backups until you no longer need rollback.
+
+### Changed files and backups
+
+```text
+/opt/onlyoffice/desktopeditors/editors/sdkjs/word/sdk-all.js
+/opt/onlyoffice/desktopeditors/editors/sdkjs/word/sdk-all-min.js
+/var/lib/onlyoffice-overtype-native-portable-940129/                 # privileged factory backup
+~/.local/state/onlyoffice-overtype-native-940129/                    # user installation state
+~/.local/share/onlyoffice/desktopeditors/sdkjs-plugins/{A360C0D9-711B-4C90-BFB4-58AC023074E6}/
+```
+
+### Rollback
+
+Close every ONLYOFFICE window, then run from the same extracted project directory:
 
 ```bash
 bash run.sh --rollback
 ```
 
-A gyári két SDKJS-fájlról a rendszer `/var/lib/onlyoffice-overtype-native-portable-940129` könyvtárban készül root-only mentés. A friss Overtype plugin a felhasználói ONLYOFFICE pluginmappában jön létre; korábbi, azonos GUID-jú plugin esetén a telepítő **nem írja felül**.
+The rollback restores the original bundled files from a hash-checked factory backup and removes the plugin/state created by this installer. **Do not delete backup files or force rollback over unrecognized changes.** The earlier ThinkCentre M900 developer installation has a *different* rollback mechanism; do not run the portable rollback there.
 
-A telepítő **elutasítja** a már módosított Overtype-motort, a foglalt X11-segédportot, az aktív korábbi Overtype automatikus indítást, a nyitott ONLYOFFICE-ot és a nem megfelelő verziót. Nincs automatikus régi hídleállítás.
+## Smoke test
 
-## Kézi ellenőrzés a második gépen
+Use only a disposable DOCX document:
 
-Csak eldobható DOCX-ben: `ABCDE` → kurzor az A után → `Insert` → `xyz` → `AxyzE`; egy `Ctrl+Z` → `ABCDE`; `Ctrl+Y` → `AxyzE`. Ismételd meg **2–3 másodperces karakterközökkel**. Kapcsold vissza az INS módot, mentsd DOCX-ként, zárd be és nyisd meg újra. Ha bármelyik eltér, **rollback**.
+1. Type `ABCDE`, position the cursor immediately after `A`, then press `Insert` to enable OVR.
+2. Type `xyz`. Expected: `AxyzE`.
+3. Press `Ctrl+Z` once. Expected: `ABCDE`; press `Ctrl+Y` once. Expected: `AxyzE`.
+4. Repeat with 2–3-second pauses between characters. One Undo should still restore the original text.
+5. Press `Insert` again and check ordinary **insertion** mode.
+6. Save to DOCX, close the editor, reopen the document and verify the saved text.
+7. Open **About & Licenses** on the Plugins ribbon to review the legal notice.
 
-A korábbi izolált RC5 (1,8 s) build 29/29 GUI-tesztet teljesített. A 10 másodperces változat az első gépen kézzel működött. A jelen forráscsomagból a ThinkPad T470s gépen külön lefordított és telepített változat a **négyből négy kézi füsttesztet teljesítette**: felülírás, lassú gépelés Undo/Redo, normál beszúrás, DOCX mentés és újranyitás (2026-10-11; felhasználó által közölt eredmény). Az eredeti, 1,8 másodperces RC5 build **29/29** automatizált GUI-tesztet teljesített egy másik gépen. A 10 másodperces hordozható buildhez **nem történt új 29 esetes automatizált futtatás**. A kiadás ezért továbbra is **beta**, nem stabil v1.0.0.
+If any behavior differs, stop using the patched editor and use the documented rollback.
 
-## Jelenlegi ismert korlátok
+## Verified results and limitations
 
-A szerkesztőmotor rendszerszintű módosítása nem szabványos, nem támogatott ONLYOFFICE plugin API. Az ONLYOFFICE-frissítés felülírhatja a patchelt fájlokat. A táblázatok, lábjegyzetek, megjegyzések, követett változások, védett mezők, összetett Unicode-gráfémák és más komplex DOCX-funkciók nincsenek átfogóan tesztelve. Fontos dokumentumokon ne használd éles munkára a beta változatot.
+- **RC5 at the original 1.8-second grouping threshold:** 3/3 targeted Undo tests and **29/29 isolated automated GUI tests**, including saved DOCX content verification.
+- **Portable RC5 with a 10-second threshold:** built and installed successfully on a second Linux Mint machine (ThinkPad T470s); **4/4 manual acceptance tests** passed (basic overwrite, slow Undo/Redo, insertion, save and reopen).
+- **Bilingual/About beta UI:** targeted toolbar/About and overtype/Undo tests were reported as passed on the ThinkPad before public beta.1 publication.
+- **CI:** repository source/unit checks passed on commits `e555a7c` and `f093772`.
+- **Not claimed:** the 29-case automated suite was **not rerun on the released 10-second build**, and complex DOCX content, tables, comments, tracked changes, footnotes, IME/grapheme clusters and collaborative editing are not comprehensively covered.
 
-## Licenc, eredet és nyilvános kiadás
+An ONLYOFFICE update may overwrite the patched bundles. Never copy bundles built for 9.4.0-129 into another editor version.
 
-A módosított ONLYOFFICE SDKJS-forrás **AGPLv3-only**, és az eredeti Ascensio System SIA további feltételei is alkalmazandók. A teljes, változatlan upstream `LICENSE` hozzáadása kötelező a **publikált** archívumhoz, illetve a repositoryhoz; csak URL nem elegendő. Az ikonok új, saját grafikai elemek (lásd `plugin/resources/PROVENANCE.md`). A bővítmény az ONLYOFFICE szalagon külön **Névjegy és licencek** gombbal jeleníti meg a módosításról és az eredeti szoftverről szóló tájékoztatást, valamint a licenclinket. A fejlesztői WebSocket-diagnosztika a nyilvános változatban alapértelmezés szerint tiltott.
+## Licensing, attribution and privacy
 
-**Kiadási licenc előkészítése (azon a gépen, ahol `--build` már sikeres):**
+Original SDKJS is © 2009–2026 **Ascensio System SIA** and governed by the **GNU AGPLv3 and the additional ONLYOFFICE terms** included in the full, unmodified repository [`LICENSE`](LICENSE). See [`NOTICE.md`](NOTICE.md), [the pinned upstream source](https://github.com/ONLYOFFICE/sdkjs/tree/v9.4.0.129) and [artwork provenance](plugin/resources/PROVENANCE.md). This project is an unofficial modification; ONLYOFFICE's trademarks are not licensed by the AGPL.
 
-```bash
-python3 tools/prepare_github_release.py
-```
+The ordinary editing path does not require a cloud account or a separately running X11 bridge. SDKJS is downloaded from GitHub during the build. The plugin currently references an HTTPS-hosted ONLYOFFICE `plugins.js` helper. Optional local developer telemetry at `127.0.0.1:39169` is disabled by default and is not required for editing.
 
-A program a helyi, rögzített SDKJS Git-commit **változatlan teljes licencfájlját** másolja a `LICENSE` fájlba, ellenőrzi annak Git SHA-ját, újraszámolja a `SHA256SUMS` fájlt és előállítja a publikálható forrás-ZIP-et. Ha nincs meg a teljes licenc, a GitHub Actions licencekapu hibával leáll.
-
-**Kiadási korlát:** az About ablak és az alapból letiltott diagnosztika új kódmódosítás, így a korábbi 4/4 kézi és 29/29 automatikus siker **nem igazolja automatikusan ezt az új csomagot**. A kiadási jelölt Névjegy/licencpanelje és natív felülírás/Undo/Redo funkciója a ThinkPad T470s-en 2026-10-11-én kézi GUI-tesztben PASS. A DOCX mentés/újranyitás a pluginfrissítés előtti RC5/10s változaton PASS. A teljes rollback éles próbája és a 10 s-os build 29-es automata regressziója még hiányzik. A 29/29 QA a régebbi 1,8 másodperces RC5 build eredménye.
-
-A részletes dokumentáció: [`DOKUMENTACIO_HU.md`](DOKUMENTACIO_HU.md), a kiadás korlátai: [`RELEASE_GATE.md`](RELEASE_GATE.md).
+For troubleshooting, architecture, precise validation history and supported rollback behavior, read the [English technical documentation](DOKUMENTACIO_EN.md).
