@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0-rc.1 — 2026-10-20
+
+- Source-only release candidate: **NOT a stable release**.
+- Added pinned upstream SDKJS build CI and new release gates.
+- Added English/Hungarian validation and release notes.
+- Word native patch and 10-second Undo logic unchanged from beta.2.
+- Full 29-case automated GUI regression for the 10-second build **still pending**.
+
 ## 0.9.0-beta.2 — 2026-10-11
 
 - English README, full technical documentation and GitHub Release notes; Hungarian originals retained.

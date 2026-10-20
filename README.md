@@ -1,6 +1,8 @@
 # ONLYOFFICE Native Overtype
 
-**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v0.9.0-beta.2`.**
+> **Latest source candidate: v1.0.0-rc.1.** This is a release candidate, **not a stable v1.0.0**. Native engine unchanged from beta.2. [Validation gate](RELEASE_CANDIDATE_V1_EN.md) · [Magyar](RELEASE_CANDIDATE_V1_HU.md).
+
+**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v1.0.0-rc.1`.**
 
 **English:** this README · [Technical documentation](DOKUMENTACIO_EN.md) · [Release notes](GITHUB_RELEASE_NOTES_EN.md) · [Release checklist](RELEASE_GATE_EN.md)\
 **Magyar:** [README magyarul](README_HU.md) · [Részletes műszaki dokumentáció](DOKUMENTACIO_HU.md) · [Kiadási megjegyzések](GITHUB_RELEASE_NOTES_HU.md)
