@@ -1,8 +1,9 @@
-"""Reproduce RC5/10s modifications from pinned ONLYOFFICE SDKJS 9.4.0.129.
+"""Reproduce RC5/10s modifications from pinned ONLYOFFICE SDKJS (9.4.0.129 and 10.0.0.169 profiles).
 
 No vendor installation paths are opened here. Anchors are exact, fail closed.
 """
 from pathlib import Path
+import re
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent/'src'))
 from patch_sdkjs import patch as patch_upstream_document
@@ -76,3 +77,32 @@ def patch_compiled_min(built):
     if MARKER in built or 'pluginMethod_OOOvertypeToggle' in built:
         raise PatchError('The SDKJS min bundle is already patched')
     return exact_replace(built,API_ANCHOR,PLUGIN_METHOD+'\n'+API_ANCHOR,'RC1 native toolbar method')
+
+# Engine API canary. _ooTryOvertypeOne() and the Undo runtime silently degrade (return false / skip the
+# lock check) when an engine method is missing or renamed, so every build must prove that the compiled
+# Word bundle still defines everything the patch relies on. Verified on SDKJS 9.4.0.129 and 10.0.0.169.
+def _members(cls,names):
+    return [(f'{cls}.prototype.{n} = function', rf'{cls}\.prototype\.{n}\s*=\s*function') for n in names]
+
+# (concrete example, regex) pairs: the example documents - and lets the tests exercise - each pattern.
+ENGINE_API=tuple(
+    _members('CDocument',(
+        'IsSelectionUse','GetCurrentParagraph','GetSelectedElementsInfo','StartSelectionFromCurPos',
+        'SaveDocumentState','LoadDocumentState','Document_Is_SelectionLocked','IsFormFieldEditing',
+        'IsFillingFormMode','IsTrackRevisions','Remove','IsActionStarted','Is_OnRecalculate',
+        'StartAction','FinalizeAction','EnterText','OnKeyDown','OnMouseDown'))
+    +_members('Paragraph',('IsCursorAtEnd','Get_RightPos','SetSelectionContentPos','GetSelectedText','getCurrentPos'))
+    +_members('CSelectedElementsInfo',('IsInTable','GetMath','GetCheckBox','IsDrawingObjSelected','IsMixedSelection'))
+    +[('function CParagraphSearchPos(', r'function\s+CParagraphSearchPos\b'),
+      ('CheckUnionLastPoints : function', r'CheckUnionLastPoints\s*:\s*function'),
+      ('Is_UserSaveMode : function', r'Is_UserSaveMode\s*:\s*function'),
+      ("window['AscDFH'].historydescription_Document_AddLetterUnion = 301", r"AscDFH\W*\.historydescription_Document_AddLetterUnion\s*="),
+      ("window['AscDFH'].historyitem_TableId_Description = 5", r"AscDFH\W*\.historyitem_TableId_Description\s*="),
+      ("window['AscCommon'].CHistory = CHistory", r"AscCommon\W*\.CHistory\s*=\s*CHistory")])
+
+def check_engine_api(built):
+    """Fail closed if the (unpatched or patched) Word bundle lacks an engine API the patch needs."""
+    missing=[example for example,pattern in ENGINE_API if not re.search(pattern,built)]
+    if missing:
+        raise PatchError('Unsupported SDKJS engine; missing: '+'; '.join(missing[:6])+(' ...' if len(missing)>6 else ''))
+    return len(ENGINE_API)

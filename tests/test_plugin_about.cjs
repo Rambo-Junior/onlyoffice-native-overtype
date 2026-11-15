@@ -14,5 +14,5 @@ assert.equal(windows.length,1);assert(windows[0].url.endsWith('/about.html'));
 plugin.event_onToolbarMenuClick('onlyoffice-native-overtype');
 assert.equal(methods[1].name,'OOOvertypeToggle');
 const html=fs.readFileSync(require('path').join(__dirname,'..','plugin','about.html'),'utf8');
-assert(html.includes('Ascensio System SIA') && html.includes('github.com/ONLYOFFICE/sdkjs/blob/v9.4.0.129/LICENSE'));
+assert(html.includes('Ascensio System SIA') && html.includes('github.com/ONLYOFFICE/sdkjs/blob/v9.4.0.129/LICENSE') && html.includes('github.com/ONLYOFFICE/sdkjs/blob/v10.0.0.169/LICENSE'));
 console.log('Plugin ABOUT / toggle unit PASS');

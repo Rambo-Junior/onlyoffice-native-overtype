@@ -3,12 +3,16 @@
 import hashlib,subprocess,sys,zipfile,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-SRC=Path.home()/'.cache/onlyoffice-overtype-native-940129/sdkjs'
-COMMIT='75b53d504bfd81bfa35d59bb57dd9e56f7c9235d'
+sys.path.insert(0,str(ROOT))
+import portable
 LICENSE_BLOB='53bc62cde3c705aa2d03b895b966bd6250f389ae'
-if not (SRC/'.git').is_dir():sys.exit('SDKJS forrás hiányzik. Előbb: bash run.sh --build')
+# The license blob is identical across the pinned SDKJS tags; use the first profile whose verified clone exists.
+for _name,_q in portable.PROFILES.items():
+    SRC=Path.home()/_q['cache']/'sdkjs';COMMIT=_q['commit'];TAG=_q['tag']
+    if (SRC/'.git').is_dir():break
+else:sys.exit('SDKJS forrás hiányzik. Előbb: bash run.sh --build')
 sha=subprocess.check_output(['git','-C',str(SRC),'rev-parse','HEAD'],text=True).strip()
-if sha!=COMMIT:sys.exit('Az SDKJS forráscommit eltér a rögzített v9.4.0.129 verziótól')
+if sha!=COMMIT:sys.exit(f'Az SDKJS forráscommit eltér a rögzített {TAG} verziótól')
 raw=subprocess.check_output(['git','-C',str(SRC),'show','HEAD:LICENSE'])
 blob=subprocess.run(['git','hash-object','--stdin'],input=raw,stdout=subprocess.PIPE,check=True).stdout.decode().strip()
 if blob!=LICENSE_BLOB:sys.exit('Az upstream LICENSE git-blob hash eltér; STOP')
