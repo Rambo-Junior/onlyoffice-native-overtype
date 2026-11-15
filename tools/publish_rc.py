@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Safely upload the CURRENT v1.0.0-rc.1 source ZIP to a GitHub draft release.
+"""Safely upload the CURRENT v1.0.0-rc.2 source ZIP to a GitHub draft release.
 
 Requires both GitHub CI jobs to be completed SUCCESS on the exact HEAD commit.
 Does not make a public stable release or write to installed ONLYOFFICE.
@@ -16,7 +16,7 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
 REPO='Rambo-Junior/onlyoffice-native-overtype'
-TAG='v1.0.0-rc.1'
+TAG='v1.0.0-rc.2'
 WORKFLOWS={'Source checks','Pinned SDKJS build'}
 
 
@@ -41,7 +41,7 @@ def verify_archive(archive:Path):
             if rel not in names:raise RuntimeError('Missing ZIP input: '+rel)
             if hashlib.sha256(z.read(rel)).hexdigest()!=digest:raise RuntimeError('ZIP hash mismatch: '+rel)
         cfg=json.loads(z.read('plugin/config.json'))
-        if cfg['version']!='1.0.0-rc.1':raise RuntimeError('Incorrect source ZIP version')
+        if cfg['version']!='1.0.0-rc.2':raise RuntimeError('Incorrect source ZIP version')
     print('SOURCE ZIP PASS:',archive,'SHA256',hashlib.sha256(archive.read_bytes()).hexdigest())
 
 
@@ -51,10 +51,10 @@ def main():
     args=parser.parse_args()
     if cmd('git','branch','--show-current')!='main':raise RuntimeError('Expected main')
     if cmd('git','status','--porcelain'):raise RuntimeError('Uncommitted changes')
-    if cmd('git','remote','get-url','origin')!='https://github.com/'+REPO+'.git':raise RuntimeError('Unexpected Git origin')
+    if cmd('git','remote','get-url','origin') not in {'https://github.com/'+REPO+'.git','git@github.com:'+REPO+'.git','ssh://git@github.com/'+REPO+'.git'}:raise RuntimeError('Unexpected Git origin')
     head=cmd('git','rev-parse','HEAD')
     if cmd('git','ls-remote','origin','refs/heads/main').split('\t')[0]!=head:raise RuntimeError('Local HEAD != pushed main')
-    if json.loads((ROOT/'plugin/config.json').read_text())['version']!='1.0.0-rc.1':raise RuntimeError('Version mismatch')
+    if json.loads((ROOT/'plugin/config.json').read_text())['version']!='1.0.0-rc.2':raise RuntimeError('Version mismatch')
     archive=ROOT.parent/(f'onlyoffice-native-overtype-{TAG}-source.zip')
     verify_archive(archive)
     runs=json.loads(cmd('gh','run','list','-R',REPO,'--commit',head,'--limit','30',

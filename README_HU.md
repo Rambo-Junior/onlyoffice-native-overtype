@@ -1,4 +1,4 @@
-# ONLYOFFICE Native Overtype – portable beta 0.9.0-beta.2
+# ONLYOFFICE Native Overtype – v1.0.0-rc.2 – kiadási jelölt
 
 **Kísérleti, nem hivatalos módosítás** az ONLYOFFICE Desktop Editors alkalmazáshoz. Nem ONLYOFFICE által támogatott funkció.
 
@@ -13,7 +13,7 @@ A telepítő a `dpkg` szerinti verziót olvassa, és pontosan egy rögzített **
 | Telepített build | SDKJS tag / commit | További upstream addon | Állapot |
 | --- | --- | --- | --- |
 | **9.4.0-129** | `v9.4.0.129` / `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` | nincs (változatlan) | Validált, lásd lent |
-| **10.0.0-169** | `v10.0.0.169` / `3679e0375a758d7dc59d31337a45461be3525ed8` | `sdkjs-forms` `v10.0.0.169` / `0148c8ed3f799136431be49d4d83b4064fbafd01` | Forrás/build/telepítő ellenőrizve; **GUI-teszt még hátra van** |
+| **10.0.0-169** | `v10.0.0.169` / `3679e0375a758d7dc59d31337a45461be3525ed8` | `sdkjs-forms` `v10.0.0.169` / `0148c8ed3f799136431be49d4d83b4064fbafd01` | Forrás/build/telepítő ellenőrizve; fejlesztői szerkesztőteszt; **teljes GUI-regresszió még nincs dokumentálva** |
 
 #### ONLYOFFICE 10.0.0-169
 
@@ -21,7 +21,7 @@ A telepítő a `dpkg` szerinti verziót olvassa, és pontosan egy rögzített **
 
 *Kezelt eltérések:* a `v10.0.0.167`-`170` upstream tagek egy commitra mutatnak, ezért a tag-ellenőrzés `git tag --points-at`-et használ `git describe` helyett; a hivatalos 10.0.0-169 bundle tartalmazza a `sdkjs-forms` (OFORM) addont, ezért ez a profil ugyanazzal a rögzített addonnal épít (a 9.4.0-129 profil az eredeti, addon nélküli buildet tartja); a plugin explicit `background` típusú és `autostart`-os (az ONLYOFFICE 10 magától indítja; a korábbi `unvisible` értéket mindkét verzió csendben `background`-nak vette).
 
-*Nincs meg:* valódi 10.0.0-169 szerkesztőben futtatás és a 29 esetes regresszió. A 10.x módosította a `StartAction`/`FinalizeAction` működését (redo-pontok mentése/visszaállítása); az Undo-csoportosítás a `FinalizeAction` után, csak nem üres felülíró műveletnél fut, ütközés nem várható, de éles használat előtt kézzel próbáld ki az Undo/Redo-t (lásd az `ABCDE` tesztet). Ha az `Insert` telepítés után sem csinál semmit: a `--status` mutasson `PORTABLE RC5/10s`-t, indítsd újra teljesen az ONLYOFFICE-ot, nézd meg, hogy az Overtype engedélyezve van-e a Pluginek között; ha így sem működik, `--rollback`, és jelezd - elsődleges gyanú a V8 kódgyorsítótár.
+*Tesztelési korlát:* a fejlesztő ONLYOFFICE 10 alatti tesztelésről számolt be; a pontos GUI-eredmények és a teljes 29 esetes regresszió nincsenek dokumentálva. A 10.x módosította a `StartAction`/`FinalizeAction` működését (redo-pontok mentése/visszaállítása); az Undo-csoportosítás a `FinalizeAction` után, csak nem üres felülíró műveletnél fut, ütközés nem várható, de éles használat előtt kézzel próbáld ki az Undo/Redo-t (lásd az `ABCDE` tesztet). Ha az `Insert` telepítés után sem csinál semmit: a `--status` mutasson `PORTABLE RC5/10s`-t, indítsd újra teljesen az ONLYOFFICE-ot, nézd meg, hogy az Overtype engedélyezve van-e a Pluginek között; ha így sem működik, `--rollback`, és jelezd - elsődleges gyanú a V8 kódgyorsítótár.
 
 *Másik 10.x build?* `python3 tools/probe_profile.py <dpkg-verzió>` levezeti a pineket, lefuttatja a teljes build-ellenőrzést, és kiír egy `PROFILES` bejegyzést. GUI-tesztet nem helyettesít.
 
@@ -73,7 +73,7 @@ A telepítő **elutasítja** a már módosított Overtype-motort, a foglalt X11-
 
 Csak eldobható DOCX-ben: `ABCDE` → kurzor az A után → `Insert` → `xyz` → `AxyzE`; egy `Ctrl+Z` → `ABCDE`; `Ctrl+Y` → `AxyzE`. Ismételd meg **2–3 másodperces karakterközökkel**. Kapcsold vissza az INS módot, mentsd DOCX-ként, zárd be és nyisd meg újra. Ha bármelyik eltér, **rollback**.
 
-A korábbi izolált RC5 (1,8 s) build 29/29 GUI-tesztet teljesített. A 10 másodperces változat az első gépen kézzel működött. A jelen forráscsomagból a ThinkPad T470s gépen külön lefordított és telepített változat a **négyből négy kézi füsttesztet teljesítette**: felülírás, lassú gépelés Undo/Redo, normál beszúrás, DOCX mentés és újranyitás (2026-10-11; felhasználó által közölt eredmény). Az eredeti, 1,8 másodperces RC5 build **29/29** automatizált GUI-tesztet teljesített egy másik gépen. A 10 másodperces hordozható buildhez **nem történt új 29 esetes automatizált futtatás**. A kiadás ezért továbbra is **beta**, nem stabil v1.0.0.
+A korábbi izolált RC5 (1,8 s) build 29/29 GUI-tesztet teljesített. A 10 másodperces változat az első gépen kézzel működött. A jelen forráscsomagból a ThinkPad T470s gépen külön lefordított és telepített változat a **négyből négy kézi füsttesztet teljesítette**: felülírás, lassú gépelés Undo/Redo, normál beszúrás, DOCX mentés és újranyitás (2026-10-11; felhasználó által közölt eredmény). Az eredeti, 1,8 másodperces RC5 build **29/29** automatizált GUI-tesztet teljesített egy másik gépen. A 10 másodperces hordozható buildhez **nem történt új 29 esetes automatizált futtatás**. A kiadás ezért továbbra is **kiadási jelölt**, nem stabil v1.0.0.
 
 ## Jelenlegi ismert korlátok
 

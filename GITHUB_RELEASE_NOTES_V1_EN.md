@@ -1,15 +1,14 @@
-# ONLYOFFICE Native Overtype v1.0.0-rc.1
+# ONLYOFFICE Native Overtype v1.0.0-rc.2
 
-**Unofficial release candidate — experimental and not supported by ONLYOFFICE. Not a stable v1.0.0 release.**
+Unofficial, experimental prerelease; not a stable release.
 
-The native Insert/Overtype and 10-second Undo grouping engine are unchanged from v0.9.0-beta.2. This candidate improves reproducibility and release engineering:
+- Adds support for ONLYOFFICE Desktop Editors 10.0.0-169, retaining 9.4.0-129.
+- Both pinned SDKJS profiles and source/unit tests passed CI on the merged compatibility update.
+- Native Insert/Overtype and 10-second Undo grouping remain unchanged.
+- Includes pinned sdkjs-forms support, version-specific installation and verified rollback.
 
-- Builds pinned ONLYOFFICE SDKJS 9.4.0-129 source in a separate GitHub Actions job; checks the generated patched JavaScript.
-- Includes source-integrity checks, new release-specific tests, signed-upstream-license provenance and bilingual release documentation.
-- Retains the reversible system-DEB installer, root factory backup, plugin and `--rollback`.
+The maintainer reports ONLYOFFICE 10 desktop testing; exact GUI results and full 29-case regression on the 10-second engine remain undocumented. The earlier 29/29 result applies to the 1.8-second RC5 only.
 
-**Test limits:** 29/29 full automated GUI tests belonged to the earlier 1.8s RC5; the 10s build passed 4/4 manual second-machine tests. The exact current release candidate has **not** been cleared for complex DOCX, collaboration, tracked changes, footnotes or IME usage. See [release gate](RELEASE_CANDIDATE_V1_EN.md).
+Supported: Linux Mint 22.3 / Cinnamon X11 / system DEB. See [README](README.md) for installation, rollback and licensing; [validation gate](RELEASE_CANDIDATE_V1_EN.md) for test limits. Use disposable documents for testing.
 
-Supported **only** on Linux Mint 22.3 / Cinnamon X11 / ONLYOFFICE Desktop Editors **9.4.0-129** installed as a DEB package. Download the source ZIP, extract and run `bash run.sh --check`, `bash run.sh --build`, `bash run.sh --install`, then `bash run.sh --status`. To revert: `bash run.sh --rollback`. Close the editor before installing or restoring; never run with the old X11 overtype helper.
-
-Original ONLYOFFICE SDKJS by Ascensio System SIA; GNU AGPLv3 and supplemental terms. This project is independent of ONLYOFFICE.
+Original SDKJS: Ascensio System SIA, GNU AGPLv3 and supplemental terms. Independent of ONLYOFFICE.

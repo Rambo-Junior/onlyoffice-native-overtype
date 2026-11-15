@@ -13,7 +13,7 @@ class ZipVerificationTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
         self.z=Path(self.tmp.name)/'source.zip'
-        cfg=json.dumps({'version':'1.0.0-rc.1'}).encode()
+        cfg=json.dumps({'version':'1.0.0-rc.2'}).encode()
         self.cfg=cfg
         self.manifest=(hashlib.sha256(cfg).hexdigest()+'  plugin/config.json\n').encode()
     def create(self,manifest=None,payload=None):
@@ -23,7 +23,7 @@ class ZipVerificationTests(unittest.TestCase):
     def test_correct_source_zip(self):
         self.create();verify_archive(self.z)
     def test_tampered_source_zip_rejected(self):
-        self.create(payload=b'{"version":"1.0.0-rc.1","malicious":true}')
+        self.create(payload=b'{"version":"1.0.0-rc.2","malicious":true}')
         with self.assertRaises(RuntimeError):verify_archive(self.z)
     def test_wrong_version_rejected(self):
         c=b'{"version":"0.9.0-beta.2"}'
