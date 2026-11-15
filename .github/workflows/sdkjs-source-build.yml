@@ -9,10 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: ['9.4.0-129', '10.0.0-169']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify pinned SDKJS source build and patch integration
-        run: python3 tools/verify_sdkjs_build.py
+      - name: Verify pinned SDKJS source build and patch integration (${{ matrix.profile }})
+        run: python3 tools/verify_sdkjs_build.py --profile ${{ matrix.profile }}

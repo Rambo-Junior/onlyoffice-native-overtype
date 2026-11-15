@@ -2,7 +2,7 @@
 
 This project is **not affiliated with, endorsed by, or supported by Ascensio System SIA / ONLYOFFICE**. It modifies the ONLYOFFICE SDKJS Word editor to add optional keyboard overtyping and groups consecutive character overwrites for Undo/Redo. The original software is Copyright © 2009–2026 Ascensio System SIA.
 
-The official SDKJS repository is https://github.com/ONLYOFFICE/sdkjs ; the exact upstream source for this beta is tagged `v9.4.0.129` at commit `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`.
+The official SDKJS repository is https://github.com/ONLYOFFICE/sdkjs ; the exact upstream sources are tagged `v9.4.0.129` (commit `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`) and `v10.0.0.169` (commit `3679e0375a758d7dc59d31337a45461be3525ed8`, built together with the upstream `sdkjs-forms` addon, tag `v10.0.0.169`, commit `0148c8ed3f799136431be49d4d83b4064fbafd01`, also AGPLv3).
 
 The upstream SDKJS is under the GNU Affero General Public License version 3, with supplementary terms in its LICENSE; see https://github.com/ONLYOFFICE/sdkjs/blob/v9.4.0.129/LICENSE . The license requires attribution, modification notices, and appropriate legal notices in modified user interfaces. Trademark rights are not granted. The patch was developed in October 2026. This project remains a **beta**. Installation and four manual acceptance cases were verified on a second Linux Mint machine on 2026-10-11; a public-release licensing review is still required.
 

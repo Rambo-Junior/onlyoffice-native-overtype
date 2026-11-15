@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pinned ONLYOFFICE Desktop Editors 9.4.0-129 native overtype beta.
+"""Pinned ONLYOFFICE Desktop Editors native overtype beta (profiles: 9.4.0-129, 10.0.0-169).
 
 --check: read-only target checks
 --build: clone pinned upstream & compile user-owned candidate (does not alter /opt)
@@ -24,21 +24,53 @@ import tempfile
 from datetime import datetime, timezone
 
 HERE=Path(__file__).resolve().parent
-VERSION='9.4.0-129'
-TAG='v9.4.0.129'
-COMMIT='75b53d504bfd81bfa35d59bb57dd9e56f7c9235d'
-DOC_BLOB='3b7d45fe3db44e9eab29ce9a2d69415971a5cd4d'
 GIT='https://github.com/ONLYOFFICE/sdkjs.git'
+FORMS_GIT='https://github.com/ONLYOFFICE/sdkjs-forms.git'
 VENDOR=Path('/opt/onlyoffice/desktopeditors')
 REL=('editors/sdkjs/word/sdk-all.js','editors/sdkjs/word/sdk-all-min.js')
-STATE=Path('/var/lib/onlyoffice-overtype-native-portable-940129')
-CACHE_NAME='.cache/onlyoffice-overtype-native-940129'
-USER_STATE_NAME='.local/state/onlyoffice-overtype-native-940129'
+CODE_CACHE='editors/sdkjs/word/sdk-all.bin'   # V8 code cache shipped next to the bundles (9.4.0-129 and 10.0.0-169); never modified
 PLUGIN_SUB='.local/share/onlyoffice/desktopeditors/sdkjs-plugins/{A360C0D9-711B-4C90-BFB4-58AC023074E6}'
 PLUGIN_SRC=HERE/'plugin'
 MARKER='ONLYOFFICE_OVERTYPE_NATIVE_RC1_940129'
 MARKER_RC5='OO_OVERTYPE_UNDO_RC5'
+BUILD_ID='native-rc5-10s-portable-beta'
+
+# One profile per supported installed DEB build. Each pins the exact upstream SDKJS commit (and addons)
+# the official package was built from. Unknown versions are refused (fail closed); new builds are
+# qualified with tools/probe_profile.py. The official DEB bundles also contain sdkjs-forms (OFORM) on
+# 10.0.0-169, so that profile builds with the same pinned addon to keep forms support intact.
+PROFILES={
+    '9.4.0-129':dict(
+        tag='v9.4.0.129',commit='75b53d504bfd81bfa35d59bb57dd9e56f7c9235d',
+        doc_blob='3b7d45fe3db44e9eab29ce9a2d69415971a5cd4d',product_version='9.4.0',build_number='129',
+        state='/var/lib/onlyoffice-overtype-native-portable-940129',
+        cache='.cache/onlyoffice-overtype-native-940129',
+        user_state='.local/state/onlyoffice-overtype-native-940129',
+        addons=(),
+        validation='Beta passed 4/4 manual smoke checks on a second Mint 22.3 X11 machine (2026-10-11); complex DOCX remains untested.'),
+    '10.0.0-169':dict(
+        tag='v10.0.0.169',commit='3679e0375a758d7dc59d31337a45461be3525ed8',
+        doc_blob='91a9135c4ca45358d15d38ba309a03ed71fb2d90',product_version='10.0.0',build_number='169',
+        state='/var/lib/onlyoffice-overtype-native-portable-1000169',
+        cache='.cache/onlyoffice-overtype-native-1000169',
+        user_state='.local/state/onlyoffice-overtype-native-1000169',
+        addons=(dict(name='sdkjs-forms',git=FORMS_GIT,tag='v10.0.0.169',commit='0148c8ed3f799136431be49d4d83b4064fbafd01'),),
+        validation='10.0.0-169 profile: source patch anchors, engine API and build verified; GUI regression on this version is NOT done yet - test on a disposable DOCX and keep --rollback ready.'),
+}
+DEFAULT_PROFILE='9.4.0-129'
+
+def select_profile(name):
+    """Bind the module-level pins (used throughout the installer) to the profile of the installed build."""
+    global VERSION,TAG,COMMIT,DOC_BLOB,STATE,CACHE_NAME,USER_STATE_NAME,PRODUCT_VERSION,BUILD_NUMBER,ADDONS,VALIDATION
+    if name not in PROFILES:raise Stop('Supported only '+', '.join(PROFILES)+'; installed '+str(name))
+    q=PROFILES[name]
+    VERSION=name;TAG=q['tag'];COMMIT=q['commit'];DOC_BLOB=q['doc_blob']
+    PRODUCT_VERSION=q['product_version'];BUILD_NUMBER=q['build_number']
+    STATE=Path(q['state']);CACHE_NAME=q['cache'];USER_STATE_NAME=q['user_state']
+    ADDONS=tuple(q['addons']);VALIDATION=q['validation']
+
 class Stop(RuntimeError):pass
+select_profile(DEFAULT_PROFILE)
 
 def digest(x):
     h=hashlib.sha256()
@@ -72,7 +104,7 @@ def get(cmd,**kwargs):
 def version():
     try:v=get(['dpkg-query','-W','-f=${Version}','onlyoffice-desktopeditors'])
     except (OSError,subprocess.CalledProcessError) as exc:raise Stop('ONLYOFFICE dpkg version unavailable') from exc
-    if v!=VERSION:raise Stop(f'Supported only {VERSION}; installed {v}')
+    select_profile(v)   # fail closed on any build that has no verified profile
 
 def idle():
     try:p=subprocess.run(['pgrep','-x','DesktopEditors'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -107,9 +139,34 @@ def user_check(build=False):
     cache,clone,candidate,user_state,plugin=path_set(user_home())
     if cache.is_symlink() or user_state.is_symlink():raise Stop('Unsafe user path')
     if user_state.exists():raise Stop('Previous portable user state exists; use --rollback')
-    if plugin.exists() or plugin.is_symlink():raise Stop('Overtype plugin GUID already exists; do not overwrite another installation')
+    if plugin.exists() or plugin.is_symlink():raise Stop('Overtype plugin GUID already exists (another or stale installation); verify and remove it manually, never overwrite')
     if build and shutil.disk_usage(user_home()).free<4*1024**3:raise Stop('4 GiB free space required for source build')
-    print('CHECK PASS: pinned version, X11, no editor, no X11 bridge, no existing plugin/native installation.')
+    print(f'CHECK PASS: profile {VERSION}, X11, no editor, no X11 bridge, no existing plugin/native installation.')
+    if (VENDOR/CODE_CACHE).is_file():
+        print('NOTE: V8 code cache sdk-all.bin is present and left untouched (the editor falls back to the JS when the source differs).')
+
+def ensure_git_addon(cache,addon):
+    """Pinned, unmodified checkout of an upstream sdkjs addon (same checks as the main SDKJS clone)."""
+    path=cache/addon['name']
+    if path.is_symlink():raise Stop('Addon symlink refused: '+addon['name'])
+    if not path.exists():
+        if cache.is_symlink():raise Stop('Cache symlink refused')
+        cache.mkdir(parents=True,exist_ok=True)
+        dl=cache/f".{addon['name']}-download-{os.getpid()}"
+        if dl.exists():raise Stop('Temporary addon clone already exists')
+        try:
+            run(['git','clone','--depth','1','--single-branch','--branch',addon['tag'],addon['git'],dl])
+            dl.rename(path)
+        finally:
+            if dl.is_dir() and not dl.is_symlink():shutil.rmtree(dl)
+    plain(path,'dir');plain(path/'.git','dir')
+    if get(['git','remote','get-url','origin'],cwd=path) not in (addon['git'],addon['git'][:-4]):
+        raise Stop('Unexpected addon Git origin: '+addon['name'])
+    if get(['git','rev-parse','HEAD'],cwd=path)!=addon['commit']:raise Stop('Addon Git commit mismatch: '+addon['name'])
+    if addon['tag'] not in get(['git','tag','--points-at','HEAD'],cwd=path).split():raise Stop('Addon Git tag mismatch: '+addon['name'])
+    if subprocess.check_output(['git','status','--porcelain=v1','-z','--untracked-files=no'],cwd=path):
+        raise Stop('Addon Git tree modified; refusing build: '+addon['name'])
+    return path
 
 def ensure_git_source(clone):
     cache=clone.parent
@@ -128,7 +185,7 @@ def ensure_git_source(clone):
     if get(['git','remote','get-url','origin'],cwd=clone) not in (GIT,GIT[:-4]):
         raise Stop('Unexpected upstream Git origin')
     if get(['git','rev-parse','HEAD'],cwd=clone)!=COMMIT:raise Stop('Upstream Git commit mismatch')
-    if get(['git','describe','--exact-match','--tags'],cwd=clone)!=TAG:raise Stop('Upstream Git tag mismatch')
+    if TAG not in get(['git','tag','--points-at','HEAD'],cwd=clone).split():raise Stop('Upstream Git tag mismatch')
     p=clone/'word/Editor/Document.js';plain(p)
     src=p.read_bytes()
     b=p.with_suffix('.js.overtype-clean-backup')
@@ -175,15 +232,18 @@ def source_build():
     cache,clone,candidate,state,plug=path_set(user_home())
     if candidate.exists() or candidate.is_symlink():raise Stop('Existing candidate; refusing to overwrite')
     ensure_git_source(clone)
-    from patches import patch_compiled_word,patch_compiled_min
-    env=os.environ.copy();env.update(PRODUCT_VERSION='9.4.0',BUILD_NUMBER='129')
-    run([sys.executable,'build/build.py','--product','word','--desktop'],cwd=clone,env=env)
+    from patches import patch_compiled_word,patch_compiled_min,check_engine_api
+    env=os.environ.copy();env.update(PRODUCT_VERSION=PRODUCT_VERSION,BUILD_NUMBER=BUILD_NUMBER)
+    build_cmd=[sys.executable,'build/build.py','--product','word','--desktop']
+    for addon in ADDONS:build_cmd+=['--addon',ensure_git_addon(cache,addon)]
+    run(build_cmd,cwd=clone,env=env)
     srcs=[clone/'deploy/sdkjs/word'/Path(rel).name for rel in REL]
     for p in srcs:
         plain(p)
         if p.stat().st_size<100000:raise Stop('Built bundle unexpectedly small')
         run(['node','--check',p])
     raw=[p.read_text(encoding='utf8') for p in srcs]
+    print('ENGINE API CHECK PASS:',check_engine_api(raw[0]),'patterns present in the built Word bundle')
     final=[patch_compiled_word(raw[0]),patch_compiled_min(raw[1])]
     if 'OO_OVERTYPE_UNDO_RC5' not in final[0] or 'pending.at - a.lastTime > 10000' not in final[0]:
         raise Stop('Missing RC5/10s patch')
@@ -195,7 +255,8 @@ def source_build():
             f.write_text(content,encoding='utf8');f.chmod(0o600)
             run(['node','--check',f])
         manifest={'version':VERSION,'source_git_commit':COMMIT,'source_git_tag':TAG,
-            'source_document_blob':DOC_BLOB,'build':'native-rc5-10s-portable-beta',
+            'source_document_blob':DOC_BLOB,'build':BUILD_ID,'profile':VERSION,
+            'addons':{a['name']:a['commit'] for a in ADDONS},
             'source_vendor_sha256':{rel:digest(VENDOR/rel) for rel in REL},
             'candidate_sha256':{rel:digest(candidate/Path(rel).name) for rel in REL},
             'created_utc':datetime.now(timezone.utc).isoformat(),
@@ -212,8 +273,9 @@ def candidate_check(home):
     cache,clone,candidate,state,plugin=path_set(home)
     plain(candidate,'dir');plain(candidate/'manifest.json')
     manifest=json.loads((candidate/'manifest.json').read_text())
-    if manifest.get('version')!=VERSION or manifest.get('source_git_commit')!=COMMIT or manifest.get('build')!='native-rc5-10s-portable-beta':
+    if manifest.get('version')!=VERSION or manifest.get('source_git_commit')!=COMMIT or manifest.get('build')!=BUILD_ID:
         raise Stop('Candidate provenance invalid')
+    if manifest.get('addons',{})!={a['name']:a['commit'] for a in ADDONS}:raise Stop('Candidate addon provenance invalid')
     for rel in REL:
         f=candidate/Path(rel).name;plain(f)
         if digest(f)!=manifest['candidate_sha256'][rel]:raise Stop('Candidate SHA256 mismatch: '+rel)
@@ -268,7 +330,7 @@ def install():
     user_check();candidate,manifest=candidate_check(user_home())
     if not sys.stdin.isatty():raise Stop('Interactive terminal required')
     print('This will replace TWO ONLYOFFICE Word JS bundles under /opt, after root backup.')
-    print('Beta passed 4/4 manual smoke checks on a second Mint 22.3 X11 machine (2026-10-11); complex DOCX remains untested.')
+    print(f'Target {VERSION}: {VALIDATION}')
     if input('Confirm with TELEPITES: ').strip()!='TELEPITES':raise Stop('Installation declined')
     run(['sudo','-v'])
     user_state=None
@@ -376,6 +438,8 @@ def status():
         label=('PORTABLE RC5/10s' if m and h==m.get('candidate_sha256',{}).get(rel)
                else 'FACTORY / OTHER (not verified)')
         print(rel,label,h)
+    print('profile:',VERSION,'| addons:',', '.join(a['name'] for a in ADDONS) or 'none')
+    print('code-cache sdk-all.bin:','present (untouched)' if (VENDOR/CODE_CACHE).is_file() else 'absent')
     print('root-backup:', 'present' if STATE.exists() else 'absent')
     print('plugin:', 'present' if plugin.exists() else 'absent')
     print('user-state:', 'present' if state.exists() else 'absent')

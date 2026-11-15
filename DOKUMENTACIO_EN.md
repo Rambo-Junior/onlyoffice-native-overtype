@@ -19,10 +19,10 @@ This behavior cannot be implemented reliably through the supported, ordinary plu
 | Item | Verified requirement |
 | --- | --- |
 | OS / desktop | Linux Mint **22.3**, Cinnamon, X11 |
-| ONLYOFFICE | Desktop Editors **9.4.0-129**, system DEB installation |
+| ONLYOFFICE | Desktop Editors **9.4.0-129** or **10.0.0-169**, system DEB installation (one pinned profile each; see `README.md`, *Supported builds*) |
 | Installation root | `/opt/onlyoffice/desktopeditors` |
-| SDKJS Git tag | `v9.4.0.129` |
-| SDKJS commit | `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` |
+| SDKJS Git tag | `v9.4.0.129` / `v10.0.0.169` (per profile) |
+| SDKJS commit | `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` / `3679e0375a758d7dc59d31337a45461be3525ed8` (10.0.0-169 also pins `sdkjs-forms` `0148c8ed3f799136431be49d4d83b4064fbafd01`) |
 | SDKJS Word build | `python3 build/build.py --product word --desktop` |
 | Tools / permissions | Git, Python 3, Node.js, `dpkg-query`, `sudo`, an internet connection, at least 4 GiB of free space |
 | Out of scope | Other editor versions/builds; Snap/Flatpak/AppImage; Wayland; Windows; macOS; other Linux distributions |
@@ -99,7 +99,7 @@ bash run.sh --status
 ```
 
 - **`--check`** is a read-only preflight; version/session/conflict checks can fail fast. A preflight against already-patched vendor files can intentionally refuse further installation.
-- **`--build`** uses `~/.cache/onlyoffice-overtype-native-940129/` and writes the candidate bundles and manifest without altering `/opt`.
+- **`--build`** uses `~/.cache/onlyoffice-overtype-native-<profile>/` and writes the candidate bundles and manifest without altering `/opt`.
 - **`--install`** requires interactive confirmation with `TELEPITES`, then uses privileged operations only when needed; it first stores and verifies factory backups before replacing the bundles and installing the user plugin. Do **not** run the whole script under `sudo`.
 - **`--status`** checks the installed native bundles, privileged backup, plugin and user state after installation.
 
@@ -113,8 +113,8 @@ The exact two system files replaced are:
 The standard installation locations for state and backups are:
 
 ```text
-/var/lib/onlyoffice-overtype-native-portable-940129/                      # root-only factory backup
-~/.local/state/onlyoffice-overtype-native-940129/                         # user state
+/var/lib/onlyoffice-overtype-native-portable-<profile>/                    # root-only factory backup (<profile>: 940129 / 1000169)
+~/.local/state/onlyoffice-overtype-native-<profile>/                        # user state
 ~/.local/share/onlyoffice/desktopeditors/sdkjs-plugins/{A360C0D9-711B-4C90-BFB4-58AC023074E6}/
 ```
 
@@ -171,7 +171,7 @@ Complex tables/cells, footnotes/endnotes/headers/footers, comments, tracked chan
 
 **Undo requires multiple presses:** check whether any typing gap exceeded **10 seconds** or whether navigation, selection, saving or mode switching interrupted the group. Reproduce only in a disposable document; capture installer `--status` if a continuous 2–3-second typing sequence still fails.
 
-**Feature disappears after an ONLYOFFICE upgrade:** package updates can overwrite modified Word bundles. **Do not copy the old 9.4.0-129 bundles into the upgraded version.** Wait for a separately validated port to that exact version.
+**Feature disappears after an ONLYOFFICE upgrade:** package updates can overwrite modified Word bundles. **Do not copy bundles built for one build into another build.** Wait for a separately validated port to that exact version.
 
 **Rollback refuses to continue:** preserve the recorded error, output of `--status`, original root backup and build manifest. A safe stop may indicate unexpected external changes. Do not force file replacement without examining the state.
 

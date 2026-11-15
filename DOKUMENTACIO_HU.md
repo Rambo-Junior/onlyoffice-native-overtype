@@ -17,9 +17,9 @@ A natív változat ezért az ONLYOFFICE `SDKJS` Word motorjában hajtja végre a
 | Paraméter | Támogatott érték |
 |---|---|
 | Operációs rendszer | Linux Mint 22.3, Cinnamon, X11 |
-| ONLYOFFICE | Desktop Editors `9.4.0-129`, DEB, `/opt/onlyoffice/desktopeditors` |
-| SDKJS | Git tag `v9.4.0.129` |
-| Git commit | `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` |
+| ONLYOFFICE | Desktop Editors `9.4.0-129` vagy `10.0.0-169`, DEB, `/opt/onlyoffice/desktopeditors` (profilonként egy rögzített build; lásd `README_HU.md`, *Támogatott buildek*) |
+| SDKJS | Git tag `v9.4.0.129` / `v10.0.0.169` (profilonként) |
+| Git commit | `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` / `3679e0375a758d7dc59d31337a45461be3525ed8` (a 10.0.0-169 a `sdkjs-forms` `0148c8ed3f799136431be49d4d83b4064fbafd01` commitot is rögzíti) |
 | Build mód | `python3 build/build.py --product word --desktop` |
 | Futtatási előfeltételek | `python3`, Node.js, Git, `sudo`, `dpkg-query`, X11, szabad tárhely, internet |
 | Nem igazolt / elutasított | Eltérő ONLYOFFICE-verzió, más csomagolás (Snap/Flatpak), Wayland, Windows, macOS |
@@ -82,7 +82,7 @@ bash run.sh --install
 bash run.sh --status
 ```
 
-Az `--check` olvasási vizsgálat. A `--build` a `$HOME/.cache/onlyoffice-overtype-native-940129/` alatt fordít, és a `candidate` almappában létrehozza a két Word-bundle-t és a buildmanifestet; nem írja át a telepített szerkesztőt. A `--install` interaktív **`TELEPITES`** megerősítést kér, majd root-jogosultsággal – **előzetes gyári mentés készítése és ellenőrzése után** – cseréli le a Word-bundle-öket. Az önálló plugin felhasználói mappába kerül. A rendszerfile-ok telepítéséhez nem a teljes scriptet kell `sudo`-val futtatni, hanem maga a script hívja a szükséges, korlátozott root-alparancsokat.
+Az `--check` olvasási vizsgálat. A `--build` a `$HOME/.cache/onlyoffice-overtype-native-<profil>/` alatt fordít, és a `candidate` almappában létrehozza a két Word-bundle-t és a buildmanifestet; nem írja át a telepített szerkesztőt. A `--install` interaktív **`TELEPITES`** megerősítést kér, majd root-jogosultsággal – **előzetes gyári mentés készítése és ellenőrzése után** – cseréli le a Word-bundle-öket. Az önálló plugin felhasználói mappába kerül. A rendszerfile-ok telepítéséhez nem a teljes scriptet kell `sudo`-val futtatni, hanem maga a script hívja a szükséges, korlátozott root-alparancsokat.
 
 A következő két telepített fájl módosul:
 
@@ -94,8 +94,8 @@ A következő két telepített fájl módosul:
 **Gyári mentés és plugin:**
 
 ```text
-/var/lib/onlyoffice-overtype-native-portable-940129/
-~/.local/state/onlyoffice-overtype-native-940129/
+/var/lib/onlyoffice-overtype-native-portable-<profil>/        # 940129 vagy 1000169
+~/.local/state/onlyoffice-overtype-native-<profil>/
 ~/.local/share/onlyoffice/desktopeditors/sdkjs-plugins/{A360C0D9-711B-4C90-BFB4-58AC023074E6}/
 ```
 

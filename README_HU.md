@@ -2,13 +2,32 @@
 
 **Kísérleti, nem hivatalos módosítás** az ONLYOFFICE Desktop Editors alkalmazáshoz. Nem ONLYOFFICE által támogatott funkció.
 
-**Egyetlen támogatott célplatform:** Linux Mint 22.3, X11 (Cinnamon), ONLYOFFICE Desktop Editors **9.4.0-129**, hagyományos DEB telepítés. Más verzióval, Flatpak/Snap alatt, Waylanden vagy Windows/macOS rendszeren **nem telepíthető**.
+**Támogatott célplatform:** Linux Mint 22.3, X11 (Cinnamon), ONLYOFFICE Desktop Editors **9.4.0-129** vagy **10.0.0-169**, hagyományos DEB telepítés (lásd [Támogatott buildek](#támogatott-buildek)). Más verzióval, Flatpak/Snap alatt, Waylanden vagy Windows/macOS rendszeren **nem telepíthető**.
 
 Az `Insert` kapcsolja az INS/OVR módot. Felülíráskor az aktuális bekezdés következő egyszerű karakterét helyettesíti, a dokumentum szerkezeti határait védve. A folyamatos gépelést legfeljebb **10 másodperces** betűközökig egy Ctrl+Z-egységbe csoportosítja; a navigáció, mentés és kijelölés külön művelet. A szalag **Overtype** gombja is kapcsol.
 
+### Támogatott buildek
+
+A telepítő a `dpkg` szerinti verziót olvassa, és pontosan egy rögzített **profilhoz** köti magát; minden más build elutasítva. Az állapot-, cache- és mentési útvonalak profilonként külön vannak (`940129` = 9.4.0-129, `1000169` = 10.0.0-169).
+
+| Telepített build | SDKJS tag / commit | További upstream addon | Állapot |
+| --- | --- | --- | --- |
+| **9.4.0-129** | `v9.4.0.129` / `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` | nincs (változatlan) | Validált, lásd lent |
+| **10.0.0-169** | `v10.0.0.169` / `3679e0375a758d7dc59d31337a45461be3525ed8` | `sdkjs-forms` `v10.0.0.169` / `0148c8ed3f799136431be49d4d83b4064fbafd01` | Forrás/build/telepítő ellenőrizve; **GUI-teszt még hátra van** |
+
+#### ONLYOFFICE 10.0.0-169
+
+*Ellenőrizve (automatikusan, nem GUI-teszt):* minden forrás-patch horgony pontosan egyszer illeszkedik; a csoportosítás által tükrözött History/Undo kód (`CheckUnionLastPoints`) és a szövegbeviteli út (`CDocument.EnterText`) azonos a 9.4.0.129-cel; mind a 34 motor-API kanári minta jelen van az épített Word-bundle-ben; mindkét lefordított bundle átmegy a `node --check`-en; a hivatalos 10.0.0-169 DEB fájljainak másolatán teljes próbafutás (build -> telepítés -> státusz -> visszaállítás) az eredeti bájtokat állította vissza. Az `sdk-all.bin` (V8 kódgyorsítótár, a 9.4.0-129-ben is megvan) érintetlen marad.
+
+*Kezelt eltérések:* a `v10.0.0.167`-`170` upstream tagek egy commitra mutatnak, ezért a tag-ellenőrzés `git tag --points-at`-et használ `git describe` helyett; a hivatalos 10.0.0-169 bundle tartalmazza a `sdkjs-forms` (OFORM) addont, ezért ez a profil ugyanazzal a rögzített addonnal épít (a 9.4.0-129 profil az eredeti, addon nélküli buildet tartja); a plugin explicit `background` típusú és `autostart`-os (az ONLYOFFICE 10 magától indítja; a korábbi `unvisible` értéket mindkét verzió csendben `background`-nak vette).
+
+*Nincs meg:* valódi 10.0.0-169 szerkesztőben futtatás és a 29 esetes regresszió. A 10.x módosította a `StartAction`/`FinalizeAction` működését (redo-pontok mentése/visszaállítása); az Undo-csoportosítás a `FinalizeAction` után, csak nem üres felülíró műveletnél fut, ütközés nem várható, de éles használat előtt kézzel próbáld ki az Undo/Redo-t (lásd az `ABCDE` tesztet). Ha az `Insert` telepítés után sem csinál semmit: a `--status` mutasson `PORTABLE RC5/10s`-t, indítsd újra teljesen az ONLYOFFICE-ot, nézd meg, hogy az Overtype engedélyezve van-e a Pluginek között; ha így sem működik, `--rollback`, és jelezd - elsődleges gyanú a V8 kódgyorsítótár.
+
+*Másik 10.x build?* `python3 tools/probe_profile.py <dpkg-verzió>` levezeti a pineket, lefuttatja a teljes build-ellenőrzést, és kiír egy `PROFILES` bejegyzést. GUI-tesztet nem helyettesít.
+
 ## Mi van a csomagban?
 
-A forrásalapú patchszkriptek, natív Overtype plugin, telepítő, ellenőrzések és visszaállító. **NINCS benne előre módosított ONLYOFFICE-motor vagy teljes alkalmazás.** A builder a hivatalos SDKJS rögzített `v9.4.0.129` Git-tagből (`75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`) épít. Az eredeti, módosítás nélküli forrást a GitHubról tölti le; szükséges az internet, `git`, `node`, `python3`, `sudo`, és legalább 4 GiB szabad hely.
+A forrásalapú patchszkriptek, natív Overtype plugin, telepítő, ellenőrzések és visszaállító. **NINCS benne előre módosított ONLYOFFICE-motor vagy teljes alkalmazás.** A builder a hivatalos SDKJS telepített buildhez rögzített Git-tagjéből (lásd Támogatott buildek) épít. Az eredeti, módosítás nélküli forrást a GitHubról tölti le; szükséges az internet, `git`, `node`, `python3`, `sudo`, és legalább 4 GiB szabad hely.
 
 A builder nem módosítja a `/opt/onlyoffice` telepítést. Az élesítés csak külön parancsra, interaktív `TELEPITES` jóváhagyással történik. Ezt a csomagot **ne telepítsd a már natív RC5-tel módosított első gépre**; ott a korábbi, működő verzió maradjon.
 
@@ -46,7 +65,7 @@ bash run.sh --status
 bash run.sh --rollback
 ```
 
-A gyári két SDKJS-fájlról a rendszer `/var/lib/onlyoffice-overtype-native-portable-940129` könyvtárban készül root-only mentés. A friss Overtype plugin a felhasználói ONLYOFFICE pluginmappában jön létre; korábbi, azonos GUID-jú plugin esetén a telepítő **nem írja felül**.
+A gyári két SDKJS-fájlról a rendszer `/var/lib/onlyoffice-overtype-native-portable-<profil>` könyvtárban (`<profil>`: `940129` vagy `1000169`) készül root-only mentés. A friss Overtype plugin a felhasználói ONLYOFFICE pluginmappában jön létre; korábbi, azonos GUID-jú plugin esetén a telepítő **nem írja felül**.
 
 A telepítő **elutasítja** a már módosított Overtype-motort, a foglalt X11-segédportot, az aktív korábbi Overtype automatikus indítást, a nyitott ONLYOFFICE-ot és a nem megfelelő verziót. Nincs automatikus régi hídleállítás.
 
