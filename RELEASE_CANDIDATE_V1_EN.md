@@ -1,10 +1,10 @@
-# v1.0.0-rc.1 — release-candidate validation and publication gate
+# v1.0.0-rc.2 — release-candidate validation and publication gate
 
 **NOT a stable, fully certified document-integrity release.** This release candidate keeps the **same native RC5/10-second overtype code** as public `v0.9.0-beta.2`. It adds pinned SDKJS build verification, additional static release gates, and separate English/Hungarian release guidance.
 
 ## Verified to date
 
-- SDKJS source pinned to `v9.4.0.129` (`75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`).
+- SDKJS source pinned to `v9.4.0.129` (`75b53d504bfd81bfa35d59bb57dd9e56f7c9235d`) or `v10.0.0.169` (`3679e0375a758d7dc59d31337a45461be3525ed8`) with pinned sdkjs-forms. Both profiles passed CI on the merged compatibility update.
 - 29/29 automated GUI scenarios on the **earlier 1.8-second RC5**, **not** the 10-second candidate.
 - 4/4 manual acceptance checks on the 10-second portable installation on ThinkPad T470s, including DOCX save/reopen; updated bilingual toolbar UI passed a targeted smoke test.
 - Portable install, status and rollback behaviors are covered by scripted fixture tests. A complete fresh-machine, failed-upgrade and rollback real-hardware matrix has **not** been performed.
@@ -20,7 +20,7 @@
 
 ## Supported system
 
-Only Linux Mint 22.3 / Cinnamon X11 with the system-DEB installation of ONLYOFFICE Desktop Editors 9.4.0-129. Not for Flatpak/Snap/AppImage, Wayland, Windows, macOS or other ONLYOFFICE versions.
+Only Linux Mint 22.3 / Cinnamon X11 with the system-DEB installation of ONLYOFFICE Desktop Editors 9.4.0-129 or 10.0.0-169. Not for Flatpak/Snap/AppImage, Wayland, Windows, macOS or other ONLYOFFICE versions.
 
 ## Source and installer
 

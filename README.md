@@ -1,13 +1,13 @@
 # ONLYOFFICE Native Overtype
 
-> **Latest source candidate: v1.0.0-rc.1.** This is a release candidate, **not a stable v1.0.0**. Native engine unchanged from beta.2. [Validation gate](RELEASE_CANDIDATE_V1_EN.md) · [Magyar](RELEASE_CANDIDATE_V1_HU.md).
+> **Latest source candidate: v1.0.0-rc.2.** This is a release candidate, **not a stable v1.0.0**. Native engine unchanged from beta.2. [Validation gate](RELEASE_CANDIDATE_V1_EN.md) · [Magyar](RELEASE_CANDIDATE_V1_HU.md).
 
-**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v1.0.0-rc.1`.**
+**Experimental, unofficial native Insert/Overtype support for ONLYOFFICE Desktop Editors — `v1.0.0-rc.2`.**
 
 **English:** this README · [Technical documentation](DOKUMENTACIO_EN.md) · [Release notes](GITHUB_RELEASE_NOTES_EN.md) · [Release checklist](RELEASE_GATE_EN.md)\
 **Magyar:** [README magyarul](README_HU.md) · [Részletes műszaki dokumentáció](DOKUMENTACIO_HU.md) · [Kiadási megjegyzések](GITHUB_RELEASE_NOTES_HU.md)
 
-> **Unofficial modification:** This project is not developed, endorsed or supported by ONLYOFFICE or Ascensio System SIA. It replaces two installed Word-editor JavaScript bundles. This is a **beta**, not a universally safe replacement for the stock editor. Back up important documents and avoid using the patched editor for irreplaceable or complex DOCX files.
+> **Unofficial modification:** This project is not developed, endorsed or supported by ONLYOFFICE or Ascensio System SIA. It replaces two installed Word-editor JavaScript bundles. This is a **release candidate**, not a universally safe replacement for the stock editor. Back up important documents and avoid using the patched editor for irreplaceable or complex DOCX files.
 
 ## Supported environment
 
@@ -28,7 +28,7 @@ The installer reads the installed `dpkg` version and binds to exactly one pinned
 | Installed build | SDKJS tag / commit | Extra upstream addon | Status |
 | --- | --- | --- | --- |
 | **9.4.0-129** | `v9.4.0.129` / `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` | none (unchanged from beta/rc.1) | Validated, see below |
-| **10.0.0-169** | `v10.0.0.169` / `3679e0375a758d7dc59d31337a45461be3525ed8` | `sdkjs-forms` `v10.0.0.169` / `0148c8ed3f799136431be49d4d83b4064fbafd01` | Source/build/installer verified; **GUI regression pending** |
+| **10.0.0-169** | `v10.0.0.169` / `3679e0375a758d7dc59d31337a45461be3525ed8` | `sdkjs-forms` `v10.0.0.169` / `0148c8ed3f799136431be49d4d83b4064fbafd01` | Source/build/installer verified; maintainer-reported desktop testing; **full GUI regression pending** |
 
 #### ONLYOFFICE 10.0.0-169
 
@@ -36,7 +36,7 @@ The installer reads the installed `dpkg` version and binds to exactly one pinned
 
 *Handled differences:* upstream tags `v10.0.0.167` to `170` share one commit, so the tag check uses `git tag --points-at` instead of `git describe`; the official 10.0.0-169 bundles contain the `sdkjs-forms` (OFORM) addon, so this profile builds with the same pinned addon (the 9.4.0-129 profile keeps its original, addon-free build); the plugin is now declared as an explicit `background` plugin with `autostart` (ONLYOFFICE 10 starts it automatically; the old `unvisible` value was silently treated as `background` by both versions).
 
-*Not done:* no run on a real 10.0.0-169 editor and no 29-case regression. 10.x changed `StartAction`/`FinalizeAction` (redo-point save/restore); the Undo grouping runs after `FinalizeAction` and only on non-empty overwrite actions, so no conflict is expected, but check Undo/Redo by hand (`ABCDE` test below) before relying on it. If `Insert` does nothing after installing, confirm `--status` shows `PORTABLE RC5/10s`, restart ONLYOFFICE completely, check that Overtype is enabled under Plugins; otherwise run `--rollback` and report - the V8 code cache is the first suspect.
+*Testing limits:* the maintainer reports desktop testing on ONLYOFFICE 10; exact GUI results and the full 29-case regression are not documented. 10.x changed `StartAction`/`FinalizeAction` (redo-point save/restore); the Undo grouping runs after `FinalizeAction` and only on non-empty overwrite actions, so no conflict is expected, but check Undo/Redo by hand (`ABCDE` test below) before relying on it. If `Insert` does nothing after installing, confirm `--status` shows `PORTABLE RC5/10s`, restart ONLYOFFICE completely, check that Overtype is enabled under Plugins; otherwise run `--rollback` and report - the V8 code cache is the first suspect.
 
 *Another 10.x build?* `python3 tools/probe_profile.py <dpkg-version>` derives the pins and runs the full build verification, then prints a `PROFILES` entry. It is no substitute for a GUI test.
 

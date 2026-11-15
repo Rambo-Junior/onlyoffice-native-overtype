@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — ONLYOFFICE Desktop Editors 10.0.0-169 support
+## 1.0.0-rc.2 — 2026-11-15 — ONLYOFFICE Desktop Editors 10.0.0-169 support
 
 - Version **profiles** in `portable.py`: the installer binds to the installed dpkg build (9.4.0-129 unchanged, new 10.0.0-169) and refuses anything else; per-profile backup/cache/state paths.
 - 10.0.0-169: pinned SDKJS `v10.0.0.169` (`3679e037...`) built together with the pinned `sdkjs-forms` addon so the replaced bundle keeps OFORM support of the official package; addon provenance is recorded in the manifest and checked before install.
@@ -8,7 +8,7 @@
 - Engine API canary (`patches.check_engine_api`, 34 patterns) runs on every build: a renamed/removed engine method can no longer silently disable the lock/table guards.
 - Plugin: explicit `"type": "background"` + `"autostart": true` (the previous `unvisible` string was silently mapped to background by ONLYOFFICE 9.4 and 10); About window lists both supported upstream versions.
 - `tools/verify_sdkjs_build.py` and CI run per profile; new `tools/probe_profile.py` qualifies future builds; new `tests/test_profiles.py`.
-- Verified on a dry run against copies of the official 10.0.0-169 DEB files (build/install/status/rollback, byte-identical restore). **Real-editor GUI regression on 10.0.0-169 is still pending**; native overtype/Undo engine code is unchanged.
+- Verified on a dry run against copies of the official 10.0.0-169 DEB files (build/install/status/rollback, byte-identical restore). Maintainer reports ONLYOFFICE 10 desktop testing; **full GUI regression is not documented**; native overtype/Undo engine code is unchanged.
 
 ## 1.0.0-rc.1 — 2026-10-20
 

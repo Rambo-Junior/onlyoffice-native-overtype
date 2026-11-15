@@ -11,7 +11,7 @@ import portable
 class ReleaseCandidateTests(unittest.TestCase):
     def test_explicit_rc_version(self):
         cfg=json.loads((ROOT/'plugin/config.json').read_text(encoding='utf-8'))
-        self.assertEqual(cfg['version'], '1.0.0-rc.1')
+        self.assertEqual(cfg['version'], '1.0.0-rc.2')
     def test_pinned_editor_version(self):
         self.assertEqual(portable.VERSION, '9.4.0-129')
         self.assertEqual(portable.COMMIT, '75b53d504bfd81bfa35d59bb57dd9e56f7c9235d')

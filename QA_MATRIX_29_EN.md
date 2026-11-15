@@ -1,6 +1,6 @@
 # 29-case original GUI regression matrix (historical baseline)
 
-**Scope:** These are the 29 scenarios from the earlier RC1.6 isolated QA harness. **29/29 PASS applies to the 1.8-second RC5 baseline**, not a fresh run against the v1.0.0-rc.1 10-second source build. This matrix is published to make the original coverage and missing new evidence explicit. These are not runnable automatically from this Markdown file.
+**Scope:** These are the 29 scenarios from the earlier RC1.6 isolated QA harness. **29/29 PASS applies to the 1.8-second RC5 baseline**, not a fresh run against the v1.0.0-rc.2 10-second source build. This matrix is published to make the original coverage and missing new evidence explicit. These are not runnable automatically from this Markdown file.
 
 Use disposable documents only. Each test begins from a fresh document with the named fixture content; save as DOCX and verify both displayed text and saved OOXML content.
 
@@ -38,7 +38,7 @@ Use disposable documents only. Each test begins from a fresh document with the n
 
 ## Candidate acceptance gates
 
-- Re-run these 29 tests against **exactly v1.0.0-rc.1, 10-second Undo threshold** using an isolated desktop installation and disposable files.
+- Re-run these 29 tests against **exactly v1.0.0-rc.2, 10-second Undo threshold** using an isolated desktop installation and disposable files.
 - Verify saved DOCX content, not only the clipboard/UI.
 - Add slow typing (2–3-second pauses), Ctrl+Z and Ctrl+Y as separate 10-second-specific tests.
 - Before calling a release stable, add real DOCX cases for tables, comments, revisions, footnotes, protected fields and complex Unicode/IME input.
